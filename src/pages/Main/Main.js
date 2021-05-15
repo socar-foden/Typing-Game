@@ -117,17 +117,17 @@ class Main {
       if (status === PROCEEDING && target.id === "answer" && key === "Enter") {
         const answer = questions[questions.length - 1];
 
-        if ((answer = target.value)) {
+        if (answer === target.value) {
+          this.getRightAnswer();
+        } else {
+          this.getWrongAnswer();
         }
       }
     });
   }
 
-  startGame() {
-    const { loopTime } = this._store.getState();
-    this._store.setState({ status: PROCEEDING });
-
-    const next = () => {
+  getNextFrame(loopTime) {
+    return () => {
       const { status } = this._store.getState();
 
       if (status === PROCEEDING) {
@@ -144,21 +144,24 @@ class Main {
             this.skipThisQuestion();
           }
         }
-        this._rafId = requestAnimationFrame(next);
+        this._rafId = requestAnimationFrame(this.getNextFrame(loopTime));
       }
     };
+  }
+
+  startGame() {
+    const { loopTime } = this._store.getState();
+    this._store.setState({ status: PROCEEDING });
 
     this._frame = 0;
-    this._rafId = requestAnimationFrame(next);
+    this._rafId = requestAnimationFrame(this.getNextFrame(loopTime));
+    this.$answer_input.value = "";
   }
 
   initGame() {
     cancelAnimationFrame(this._rafId);
     this._store.setState(initialState);
-
-    const answer = this.getAnswerInput();
-    this.$container.replaceChild(answer, this.$answer_input);
-    this.$answer_input = answer;
+    this.$answer_input.value = "";
   }
 
   endGame() {
@@ -179,6 +182,24 @@ class Main {
       questions: questions.slice(0, questions.length - 1),
       numberOfAnswer: numberOfAnswer - 1,
     });
+  }
+
+  getRightAnswer() {
+    const { questions } = this._store.getState();
+
+    this._store.setState({
+      loopTime: LOOP_SECONDS,
+      questions: questions.slice(0, questions.length - 1),
+    });
+
+    this._frame = 0;
+    cancelAnimationFrame(this._rafId);
+    this._rafId = requestAnimationFrame(this.getNextFrame(LOOP_SECONDS));
+    this.$answer_input.value = "";
+  }
+
+  getWrongAnswer() {
+    this.$answer_input.value = "";
   }
 }
 

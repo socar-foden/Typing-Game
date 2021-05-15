@@ -10,7 +10,5 @@ describe("[App]", () => {
       app.init(root);
       expect(mockCall).toBeCalled();
     });
-
-    // it("start 버튼 클릭시 ");
   });
 });
