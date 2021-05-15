@@ -1,24 +1,8 @@
-import { READY } from "../constants/constants";
+import { initialState } from "../constants/constants";
 
 class Store {
   constructor() {
-    this._state = {
-      questions: [
-        "사과",
-        "기차",
-        "원숭이",
-        "훈민정음",
-        "메시",
-        "까마귀",
-        "소원",
-        "아프리카",
-        "대한민국",
-      ],
-      numberOfAnswer: 10,
-      totalTime: 0,
-      loopTime: 10,
-      status: READY,
-    };
+    this._state = initialState;
     this._observers = [];
 
     if (!Store._instance) {
