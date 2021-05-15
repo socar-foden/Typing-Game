@@ -1,5 +1,5 @@
-import { test } from "./test";
+// import { test } from "./test";
 
-const a = 1;
+// const a = 1;
 
-console.log(a, test);
+// console.log(a, test);

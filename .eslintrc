@@ -1,7 +1,11 @@
 {
   "extends": ["airbnb"],
   "rules": {
-    "quotes": 0
+    "quotes": 0,
+    "import/prefer-default-export": 0
   },
-  "ignorePatterns": ["**/*.config.js"]
+  "ignorePatterns": ["**/*.config.js"],
+  "env": {
+    "jest": true
+  }
 }
