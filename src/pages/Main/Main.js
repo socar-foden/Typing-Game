@@ -11,23 +11,23 @@ import {
 
 class Main {
   constructor() {
+    this._store = Store.getInstance();
     this.$container = document.createElement("div");
     this.addEventListener();
   }
 
   setUp() {
     this.$container.innerHTML = "";
-    const state = Store.getInstance().getState();
 
-    this.$header = this.getHeader(state);
-    this.$question = this.getQuestion(state);
-    this.$answer = this.getAnswer();
-    this.$start = this.getStart(state);
+    this.$header = this.getHeader();
+    this.$question = this.getQuestion();
+    this.$answer_input = this.getAnswerInput();
+    this.$start_button = this.getStartButton();
 
     this.$container.append(this.$header);
     this.$container.append(this.$question);
-    this.$container.append(this.$answer);
-    this.$container.append(this.$start);
+    this.$container.append(this.$answer_input);
+    this.$container.append(this.$start_button);
   }
 
   render($el) {
@@ -36,20 +36,20 @@ class Main {
   }
 
   update() {
-    const state = Store.getInstance().getState();
-
-    const header = this.getHeader(state);
+    const header = this.getHeader();
     this.$container.replaceChild(header, this.$header);
     this.$header = header;
-    const question = this.getQuestion(state);
+    const question = this.getQuestion();
     this.$container.replaceChild(question, this.$question);
     this.$question = question;
-    const start = this.getStart(state);
-    this.$container.replaceChild(start, this.$start);
-    this.$start = start;
+    const start = this.getStartButton();
+    this.$container.replaceChild(start, this.$start_button);
+    this.$start_button = start;
   }
 
-  getHeader({ loopTime, numberOfAnswer }) {
+  getHeader() {
+    const { loopTime, numberOfAnswer } = this._store.getState();
+
     const header = document.createElement("div");
     const remain_time = document.createElement("div");
     remain_time.setAttribute("data-testid", "remain-time");
@@ -64,7 +64,9 @@ class Main {
     return header;
   }
 
-  getQuestion({ status, questions = [] }) {
+  getQuestion() {
+    const { status, questions } = this._store.getState();
+
     const question = document.createElement("div");
     question.setAttribute("data-testid", "question");
     question.innerHTML = `${
@@ -74,42 +76,43 @@ class Main {
     return question;
   }
 
-  getAnswer() {
-    const answer = document.createElement("input");
-    answer.setAttribute("type", "text");
-    answer.setAttribute("data-testid", "answer");
-    answer.setAttribute("id", "answer");
-    answer.setAttribute("placeholder", "입력");
+  getAnswerInput() {
+    const answer_input = document.createElement("input");
+    answer_input.setAttribute("type", "text");
+    answer_input.setAttribute("data-testid", "answer");
+    answer_input.setAttribute("id", "answer");
+    answer_input.setAttribute("placeholder", "입력");
 
-    return answer;
+    return answer_input;
   }
 
-  getStart({ status }) {
-    const start = document.createElement("button");
-    start.setAttribute("data-testid", "start");
-    start.setAttribute("id", "start");
-    start.innerHTML = `${buttonMessageMap[status]}`;
+  getStartButton() {
+    const { status } = this._store.getState();
 
-    return start;
+    const start_button = document.createElement("button");
+    start_button.setAttribute("data-testid", "start");
+    start_button.setAttribute("id", "start");
+    start_button.innerHTML = `${buttonMessageMap[status]}`;
+
+    return start_button;
   }
 
   addEventListener() {
     this.$container.addEventListener("click", (e) => {
       if (e.target.id === "start") {
-        const store = Store.getInstance();
-        const { status } = store.getState();
+        const { status } = this._store.getState();
 
         if (status === READY) {
-          this.startGame(store);
+          this.startGame();
         } else if (status === PROCEEDING) {
-          this.initGame(store);
+          this.initGame();
         }
       }
     });
 
     this.$container.addEventListener("keypress", (e) => {
       const { target, key } = e;
-      const { questions, status } = Store.getInstance().getState();
+      const { questions, status } = this._store.getState();
 
       if (status === PROCEEDING && target.id === "answer" && key === "Enter") {
         const answer = questions[questions.length - 1];
@@ -120,25 +123,25 @@ class Main {
     });
   }
 
-  startGame(store) {
-    const { loopTime } = store.getState();
-    store.setState({ status: PROCEEDING });
+  startGame() {
+    const { loopTime } = this._store.getState();
+    this._store.setState({ status: PROCEEDING });
 
     const next = () => {
-      const { status } = store.getState();
+      const { status } = this._store.getState();
 
       if (status === PROCEEDING) {
         if (++this._frame % SECONDS_PER_FRAME === 0) {
-          this.nextLoop(store, loopTime);
+          this.nextLoop(loopTime);
         }
         if (this._frame === SECONDS_PER_FRAME * (loopTime + 1)) {
-          const { questions } = store.getState();
+          const { questions } = this._store.getState();
           this._frame = 0;
 
           if (questions.length <= 1) {
-            this.endGame(store);
+            this.endGame();
           } else {
-            this.skipThisQuestion(store);
+            this.skipThisQuestion();
           }
         }
         this._rafId = requestAnimationFrame(next);
@@ -149,29 +152,29 @@ class Main {
     this._rafId = requestAnimationFrame(next);
   }
 
-  initGame(store) {
+  initGame() {
     cancelAnimationFrame(this._rafId);
-    store.setState(initialState);
+    this._store.setState(initialState);
 
-    const answer = this.getAnswer();
-    this.$container.replaceChild(answer, this.$answer);
-    this.$answer = answer;
+    const answer = this.getAnswerInput();
+    this.$container.replaceChild(answer, this.$answer_input);
+    this.$answer_input = answer;
   }
 
-  endGame(store) {
-    store.setState({ status: END, loopTime: LOOP_SECONDS });
+  endGame() {
+    this._store.setState({ status: END, loopTime: LOOP_SECONDS });
   }
 
-  nextLoop(store, loopTime) {
-    store.setState({
+  nextLoop(loopTime) {
+    this._store.setState({
       loopTime: loopTime - this._frame / 60,
     });
   }
 
-  skipThisQuestion(store) {
-    const { questions, numberOfAnswer } = store.getState();
+  skipThisQuestion() {
+    const { questions, numberOfAnswer } = this._store.getState();
 
-    store.setState({
+    this._store.setState({
       loopTime: LOOP_SECONDS,
       questions: questions.slice(0, questions.length - 1),
       numberOfAnswer: numberOfAnswer - 1,
