@@ -1,11 +1,20 @@
 {
   "extends": ["airbnb"],
+  "ignorePatterns": ["public/*", "**/*.config.js"],
+  "env": {
+    "jest": true,
+    "browser": true
+  },
   "rules": {
     "quotes": 0,
-    "import/prefer-default-export": 0
-  },
-  "ignorePatterns": ["**/*.config.js"],
-  "env": {
-    "jest": true
+    "import/prefer-default-export": 0,
+    "import/no-useless-path-segments": 0,
+    "no-param-reassign": 0,
+    "comma-dangle": 0,
+    "camelcase": 0,
+    "no-underscore-dangle": 0,
+    "indent": 0,
+    "no-plusplus": 0,
+    "class-methods-use-this": 0
   }
 }

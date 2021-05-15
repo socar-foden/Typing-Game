@@ -1,12 +1,16 @@
 import Main from "../../pages/Main/Main";
+import Store from "../../store/store";
 
 class App {
   constructor() {
-    this.main = new Main();
+    this._main = new Main();
+    this._store = Store.getInstance();
+
+    this._store.addObserver(this._main);
   }
 
-  init() {
-    return this.main.render();
+  init($el) {
+    this._main.render($el);
   }
 }
 

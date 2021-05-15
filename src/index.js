@@ -1,5 +1,4 @@
-// import { test } from "./test";
+import App from "../src/components/App/App";
 
-// const a = 1;
-
-// console.log(a, test);
+const app = new App();
+app.init(document.getElementById("root"));

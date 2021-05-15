@@ -1,6 +1,24 @@
+import { READY } from "../constants/constants";
+
 class Store {
   constructor() {
-    this._state = {};
+    this._state = {
+      questions: [
+        "사과",
+        "기차",
+        "원숭이",
+        "훈민정음",
+        "메시",
+        "까마귀",
+        "소원",
+        "아프리카",
+        "대한민국",
+      ],
+      numberOfAnswer: 10,
+      totalTime: 0,
+      loopTime: 10,
+      status: READY,
+    };
     this._observers = [];
 
     if (!Store._instance) {
@@ -18,8 +36,13 @@ class Store {
     return this._instance;
   }
 
-  set state(state) {
+  setState(state) {
     this._state = { ...this._state, ...state };
+    this.notifyAll();
+  }
+
+  getState() {
+    return this._state;
   }
 
   addObserver(observer) {
@@ -32,7 +55,7 @@ class Store {
 
   notifyAll() {
     this._observers.forEach((observer) => {
-      observer.render();
+      observer.update();
     });
   }
 }
