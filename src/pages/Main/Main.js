@@ -141,11 +141,10 @@ class Main {
         if (this._frame === SECONDS_PER_FRAME * (loopTime + 1)) {
           const { questions } = this._store.getState();
           this._frame = 0;
+          this.skipThisQuestion();
 
           if (questions.length <= 1) {
             this.endGame();
-          } else {
-            this.skipThisQuestion();
           }
         }
         this._rafId = requestAnimationFrame(this.getNextFrame(loopTime));
