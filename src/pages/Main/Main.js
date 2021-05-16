@@ -7,14 +7,13 @@ import {
   SECONDS_PER_FRAME,
 } from "../../constants/constants";
 import { getQuestions } from "../../services/service";
+import Page from "../Page";
 import "./Main.scss";
 
-class Main {
+class Main extends Page {
   constructor(store) {
-    this._store = store;
-    this.$container = document.createElement("div");
+    super(store);
     this.$container.className = "main";
-    this.addEventListener();
   }
 
   async setQuestion() {
@@ -55,9 +54,8 @@ class Main {
   }
 
   render($el) {
-    this.setUp();
+    super.render($el);
     this.setQuestion();
-    $el.append(this.$container);
   }
 
   update() {

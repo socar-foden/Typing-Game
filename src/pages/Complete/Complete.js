@@ -1,12 +1,11 @@
 import { buttonMessageMap, initialState } from "../../constants/constants";
+import Page from "../Page";
 import "./Complete.scss";
 
-class Complete {
+class Complete extends Page {
   constructor(store) {
-    this._store = store;
-    this.$container = document.createElement("div");
+    super(store);
     this.$container.className = "complete";
-    this.addEventListener();
   }
 
   setUp() {
@@ -21,11 +20,6 @@ class Complete {
     this.$container.append(this.$score);
     this.$container.append(this.$avg_answer_time);
     this.$container.append(this.$restart_button);
-  }
-
-  render($el) {
-    this.setUp();
-    $el.append(this.$container);
   }
 
   getHeader() {

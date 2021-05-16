@@ -19,10 +19,6 @@ class Store {
     this._observers.push(observer);
   }
 
-  removeObserver(observer) {
-    this._observers = this._observers.filter((item) => item !== observer);
-  }
-
   notifyAll() {
     this._observers.forEach((observer) => {
       observer.update();
