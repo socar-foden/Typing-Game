@@ -1,0 +1,18 @@
+.flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  @extend .flex;
+
+  #root {
+    width: 250px;
+    height: 150px;
+    @extend .flex;
+  }
+}

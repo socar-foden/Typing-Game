@@ -2,6 +2,7 @@ import Complete from "../../pages/Complete/Complete";
 import Main from "../../pages/Main/Main";
 import Store from "../../store/store";
 import Router from "../Router/Router";
+import "./App.scss";
 
 class App {
   constructor($root) {

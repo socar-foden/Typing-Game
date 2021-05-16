@@ -8,11 +8,13 @@ import {
   READY,
   SECONDS_PER_FRAME,
 } from "../../constants/constants";
+import "./Main.scss";
 
 class Main {
   constructor() {
     this._store = Store.getInstance();
     this.$container = document.createElement("div");
+    this.$container.className = "main";
     this.addEventListener();
   }
 
@@ -50,16 +52,17 @@ class Main {
   getHeader() {
     const { loopTime, numberOfAnswer } = this._store.getState();
 
-    const header = document.createElement("div");
-    const remain_time = document.createElement("div");
+    const header = document.createElement("header");
+    const remain_time = document.createElement("span");
     remain_time.setAttribute("data-testid", "remain-time");
     remain_time.innerHTML = `남은 시간: ${loopTime}초`;
-    const score = document.createElement("div");
+    const score = document.createElement("span");
     score.setAttribute("data-testid", "score");
     score.innerHTML = `점수: ${numberOfAnswer}점`;
 
     header.append(remain_time);
     header.append(score);
+    header.className = "header";
 
     return header;
   }
@@ -67,11 +70,12 @@ class Main {
   getQuestion() {
     const { status, questions } = this._store.getState();
 
-    const question = document.createElement("div");
+    const question = document.createElement("h1");
     question.setAttribute("data-testid", "question");
     question.innerHTML = `${
       status === READY ? "문제 단어" : questions[questions.length - 1]
     }`;
+    question.className = "question";
 
     return question;
   }
@@ -82,6 +86,7 @@ class Main {
     answer_input.setAttribute("data-testid", "answer-input");
     answer_input.setAttribute("id", "answer-input");
     answer_input.setAttribute("placeholder", "입력");
+    answer_input.className = "answer-input";
 
     return answer_input;
   }
@@ -93,6 +98,7 @@ class Main {
     start_button.setAttribute("data-testid", "start-button");
     start_button.setAttribute("id", "start-button");
     start_button.innerHTML = `${buttonMessageMap[status]}`;
+    start_button.className = "start-button";
 
     return start_button;
   }

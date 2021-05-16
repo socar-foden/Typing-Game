@@ -50,7 +50,9 @@ class Complete {
 
     const avg_answer_time = document.createElement("div");
     avg_answer_time.setAttribute("data-testid", "avg-answer-time");
-    avg_answer_time.innerHTML = `${Math.floor(totalTime / numberOfAnswer)}`;
+    avg_answer_time.innerHTML = `단어당 평균 답변 시간은 ${Math.floor(
+      totalTime / numberOfAnswer
+    )}초입니다.`;
 
     return avg_answer_time;
   }
