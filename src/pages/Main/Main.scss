@@ -9,12 +9,16 @@
   text-align: center;
 }
 
-.main {
+.wrapper {
   width: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.main {
+  @extend .wrapper;
 
   .header {
     width: 100%;

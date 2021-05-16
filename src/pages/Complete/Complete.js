@@ -1,10 +1,12 @@
 import { buttonMessageMap, initialState } from "../../constants/constants";
 import Store from "../../store/store";
+import "./Complete.scss";
 
 class Complete {
   constructor() {
     this._store = Store.getInstance();
     this.$container = document.createElement("div");
+    this.$container.className = "complete";
     this.addEventListener();
   }
 
@@ -28,9 +30,10 @@ class Complete {
   }
 
   getHeader() {
-    const header = document.createElement("header");
+    const header = document.createElement("h3");
     header.setAttribute("data-testid", "success-message");
     header.innerHTML = `Mission Complete!`;
+    header.className = "success-message";
 
     return header;
   }
@@ -38,9 +41,10 @@ class Complete {
   getScore() {
     const { numberOfAnswer } = this._store.getState();
 
-    const score = document.createElement("div");
+    const score = document.createElement("h2");
     score.setAttribute("data-testid", "score");
     score.innerHTML = `당신의 점수는 ${numberOfAnswer}점입니다.`;
+    score.className = "score";
 
     return score;
   }
@@ -48,22 +52,24 @@ class Complete {
   getAvgAnswerTime() {
     const { totalTime, numberOfAnswer } = this._store.getState();
 
-    const avg_answer_time = document.createElement("div");
+    const avg_answer_time = document.createElement("span");
     avg_answer_time.setAttribute("data-testid", "avg-answer-time");
     avg_answer_time.innerHTML = `단어당 평균 답변 시간은 ${Math.floor(
       totalTime / numberOfAnswer
     )}초입니다.`;
+    avg_answer_time.className = "avg-answer-time";
 
     return avg_answer_time;
   }
 
   getRestartButton() {
-    const start_button = document.createElement("button");
-    start_button.setAttribute("data-testid", "restart-button");
-    start_button.setAttribute("id", "restart-button");
-    start_button.innerHTML = buttonMessageMap.END;
+    const restart_button = document.createElement("button");
+    restart_button.setAttribute("data-testid", "restart-button");
+    restart_button.setAttribute("id", "restart-button");
+    restart_button.innerHTML = buttonMessageMap.END;
+    restart_button.className = "restart-button";
 
-    return start_button;
+    return restart_button;
   }
 
   addEventListener() {

@@ -1,0 +1,28 @@
+@import "../Main/Main.scss";
+
+.complete {
+  @extend .wrapper;
+
+  .success-message {
+    justify-content: center;
+  }
+
+  .score {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .avg-answer-time {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .restart-button {
+    @extend .block;
+    cursor: pointer;
+    padding: 10px 55px 10px 55px;
+  }
+}
