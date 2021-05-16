@@ -79,8 +79,8 @@ class Main {
   getAnswerInput() {
     const answer_input = document.createElement("input");
     answer_input.setAttribute("type", "text");
-    answer_input.setAttribute("data-testid", "answer");
-    answer_input.setAttribute("id", "answer");
+    answer_input.setAttribute("data-testid", "answer-input");
+    answer_input.setAttribute("id", "answer-input");
     answer_input.setAttribute("placeholder", "입력");
 
     return answer_input;
@@ -90,8 +90,8 @@ class Main {
     const { status } = this._store.getState();
 
     const start_button = document.createElement("button");
-    start_button.setAttribute("data-testid", "start");
-    start_button.setAttribute("id", "start");
+    start_button.setAttribute("data-testid", "start-button");
+    start_button.setAttribute("id", "start-button");
     start_button.innerHTML = `${buttonMessageMap[status]}`;
 
     return start_button;
@@ -99,7 +99,7 @@ class Main {
 
   addEventListener() {
     this.$container.addEventListener("click", (e) => {
-      if (e.target.id === "start") {
+      if (e.target.id === "start-button") {
         const { status } = this._store.getState();
 
         if (status === READY) {
@@ -114,7 +114,11 @@ class Main {
       const { target, key } = e;
       const { questions, status } = this._store.getState();
 
-      if (status === PROCEEDING && target.id === "answer" && key === "Enter") {
+      if (
+        status === PROCEEDING &&
+        target.id === "answer-input" &&
+        key === "Enter"
+      ) {
         const answer = questions[questions.length - 1];
 
         if (answer === target.value) {
@@ -166,6 +170,8 @@ class Main {
 
   endGame() {
     this._store.setState({ status: END, loopTime: LOOP_SECONDS });
+    this.$answer_input.value = "";
+    location.hash = "/complete";
   }
 
   nextLoop(loopTime) {
@@ -185,17 +191,22 @@ class Main {
   }
 
   getRightAnswer() {
-    const { questions } = this._store.getState();
+    const { questions, loopTime, totalTime } = this._store.getState();
 
-    this._store.setState({
-      loopTime: LOOP_SECONDS,
-      questions: questions.slice(0, questions.length - 1),
-    });
+    if (questions.length > 1) {
+      this._store.setState({
+        loopTime: LOOP_SECONDS,
+        questions: questions.slice(0, questions.length - 1),
+        totalTime: totalTime + (LOOP_SECONDS - loopTime),
+      });
 
-    this._frame = 0;
-    cancelAnimationFrame(this._rafId);
-    this._rafId = requestAnimationFrame(this.getNextFrame(LOOP_SECONDS));
-    this.$answer_input.value = "";
+      this._frame = 0;
+      cancelAnimationFrame(this._rafId);
+      this._rafId = requestAnimationFrame(this.getNextFrame(LOOP_SECONDS));
+      this.$answer_input.value = "";
+    } else {
+      this.endGame();
+    }
   }
 
   getWrongAnswer() {

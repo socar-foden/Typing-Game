@@ -3,12 +3,7 @@ import { fireEvent, getByTestId } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
 import Main from "./Main";
-import { initialState } from "../../constants/constants";
-
-const enterKey = {
-  key: "Enter",
-  code: "Enter",
-};
+import { enterKey, initialState } from "../../constants/constants";
 
 const { questions, loopTime, numberOfAnswer } = initialState;
 
@@ -30,8 +25,8 @@ describe("[Main]", () => {
       expect(getByTestId(screen, "remain-time")).toBeTruthy();
       expect(getByTestId(screen, "score")).toBeTruthy();
       expect(getByTestId(screen, "question")).toBeTruthy();
-      expect(getByTestId(screen, "answer")).toBeTruthy();
-      expect(getByTestId(screen, "start")).toBeTruthy();
+      expect(getByTestId(screen, "answer-input")).toBeTruthy();
+      expect(getByTestId(screen, "start-button")).toBeTruthy();
     });
   });
 
@@ -39,10 +34,10 @@ describe("[Main]", () => {
     describe("시작전", () => {
       it("텍스트 입력후, Enter키를 눌러도 startGame 함수가 호출되지 않는다.", () => {
         const mockCall = jest.spyOn(main, "getRightAnswer");
-        fireEvent.change(getByTestId(screen, "answer"), {
+        fireEvent.change(getByTestId(screen, "answer-input"), {
           target: { value: "test-answer" },
         });
-        fireEvent.keyPress(getByTestId(screen, "answer"), enterKey);
+        fireEvent.keyPress(getByTestId(screen, "answer-input"), enterKey);
         expect(mockCall).not.toBeCalled();
       });
     });
@@ -51,12 +46,12 @@ describe("[Main]", () => {
       it("startGame 함수가 호출된다.", () => {
         const mockCall = jest.spyOn(main, "startGame");
 
-        userEvent.click(getByTestId(screen, "start"));
+        userEvent.click(getByTestId(screen, "start-button"));
         expect(mockCall).toBeCalled();
       });
 
       it("텍스트가 '초기화'로 변경된다.", () => {
-        expect(getByTestId(screen, "start").innerHTML).toEqual("초기화");
+        expect(getByTestId(screen, "start-button").innerHTML).toEqual("초기화");
       });
     });
 
@@ -64,10 +59,10 @@ describe("[Main]", () => {
       it("getWrongAnswer 함수가 호출된다.", () => {
         const mockCall = jest.spyOn(main, "getWrongAnswer");
 
-        fireEvent.change(getByTestId(screen, "answer"), {
+        fireEvent.change(getByTestId(screen, "answer-input"), {
           target: { value: "wrong-answer" },
         });
-        fireEvent.keyPress(getByTestId(screen, "answer"), enterKey);
+        fireEvent.keyPress(getByTestId(screen, "answer-input"), enterKey);
         expect(mockCall).toBeCalled();
       });
     });
@@ -76,10 +71,10 @@ describe("[Main]", () => {
       it("getRightAnswer 함수가 호출된다.", () => {
         const mockCall = jest.spyOn(main, "getRightAnswer");
 
-        fireEvent.change(getByTestId(screen, "answer"), {
+        fireEvent.change(getByTestId(screen, "answer-input"), {
           target: { value: questions[questions.length - 1] },
         });
-        fireEvent.keyPress(getByTestId(screen, "answer"), enterKey);
+        fireEvent.keyPress(getByTestId(screen, "answer-input"), enterKey);
         expect(mockCall).toBeCalled();
       });
 
@@ -102,7 +97,7 @@ describe("[Main]", () => {
       });
 
       it(`입력란이 초기화된다.`, () => {
-        expect(getByTestId(screen, "answer").innerHTML).toEqual("");
+        expect(getByTestId(screen, "answer-input").innerHTML).toEqual("");
       });
     });
 
@@ -110,7 +105,7 @@ describe("[Main]", () => {
       it("initGame 함수가 호출된다.", () => {
         const mockCall = jest.spyOn(main, "initGame");
 
-        userEvent.click(getByTestId(screen, "start"));
+        userEvent.click(getByTestId(screen, "start-button"));
         expect(mockCall).toBeCalled();
       });
 
@@ -118,10 +113,12 @@ describe("[Main]", () => {
         expect(getByTestId(screen, "remain-time").innerHTML).toEqual(
           "남은 시간: 10초"
         );
-        expect(getByTestId(screen, "score").innerHTML).toEqual("점수: 10점");
+        expect(getByTestId(screen, "score").innerHTML).toEqual(
+          `점수: ${numberOfAnswer}점`
+        );
         expect(getByTestId(screen, "question").innerHTML).toEqual("문제 단어");
-        expect(getByTestId(screen, "answer").value).toEqual("");
-        expect(getByTestId(screen, "start").innerHTML).toEqual("시작");
+        expect(getByTestId(screen, "answer-input").value).toEqual("");
+        expect(getByTestId(screen, "start-button").innerHTML).toEqual("시작");
       });
     });
   });

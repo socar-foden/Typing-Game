@@ -1,4 +1,4 @@
 import App from "../src/components/App/App";
 
-const app = new App();
-app.init(document.getElementById("root"));
+const app = new App(document.getElementById("root"));
+app.init();
