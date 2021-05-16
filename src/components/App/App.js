@@ -7,12 +7,12 @@ import "./App.scss";
 class App {
   constructor($root) {
     this.$root = $root;
-    this._main = new Main();
-    this._complete = new Complete();
 
-    this._store = Store.getInstance();
+    this._store = new Store();
+    this._main = new Main(this._store);
+    this._complete = new Complete(this._store);
+
     this._store.addObserver(this._main);
-
     this._router = new Router(this.$root);
   }
 

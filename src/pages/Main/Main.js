@@ -1,21 +1,43 @@
-import Store from "../../store/store";
 import {
   buttonMessageMap,
   END,
   initialState,
-  LOOP_SECONDS,
   PROCEEDING,
   READY,
   SECONDS_PER_FRAME,
 } from "../../constants/constants";
+import { getQuestions } from "../../services/service";
 import "./Main.scss";
 
 class Main {
-  constructor() {
-    this._store = Store.getInstance();
+  constructor(store) {
+    this._store = store;
     this.$container = document.createElement("div");
     this.$container.className = "main";
     this.addEventListener();
+  }
+
+  async setQuestion() {
+    try {
+      const memo = sessionStorage.getItem("memo_questions");
+      let questions = [];
+
+      if (memo) {
+        questions = JSON.parse(memo);
+      } else {
+        const res = await getQuestions();
+        questions = await res.json();
+        sessionStorage.setItem("memo_questions", JSON.stringify(questions));
+      }
+
+      this._store.setState({
+        questions,
+        numberOfAnswer: questions.length,
+        loopTime: questions[0]?.second,
+      });
+    } catch (e) {
+      console.error(`[Main] setQuestion :: `, e);
+    }
   }
 
   setUp() {
@@ -34,6 +56,7 @@ class Main {
 
   render($el) {
     this.setUp();
+    this.setQuestion();
     $el.append(this.$container);
   }
 
@@ -73,7 +96,7 @@ class Main {
     const question = document.createElement("h1");
     question.setAttribute("data-testid", "question");
     question.innerHTML = `${
-      status === READY ? "문제 단어" : questions[questions.length - 1]
+      status === READY ? "문제 단어" : questions[questions.length - 1]?.text
     }`;
     question.className = "question";
 
@@ -125,7 +148,7 @@ class Main {
         target.id === "answer-input" &&
         key === "Enter"
       ) {
-        const answer = questions[questions.length - 1];
+        const answer = questions[questions.length - 1]?.text;
 
         if (answer === target.value) {
           this.getRightAnswer();
@@ -174,7 +197,10 @@ class Main {
   }
 
   endGame() {
-    this._store.setState({ status: END, loopTime: LOOP_SECONDS });
+    this._store.setState({
+      status: END,
+      loopTime: 0,
+    });
     this.$answer_input.value = "";
     location.hash = "/complete";
   }
@@ -189,7 +215,7 @@ class Main {
     const { questions, numberOfAnswer } = this._store.getState();
 
     this._store.setState({
-      loopTime: LOOP_SECONDS,
+      loopTime: questions[questions.length - 2]?.second,
       questions: questions.slice(0, questions.length - 1),
       numberOfAnswer: numberOfAnswer - 1,
     });
@@ -200,14 +226,17 @@ class Main {
 
     if (questions.length > 1) {
       this._store.setState({
-        loopTime: LOOP_SECONDS,
+        loopTime: questions[questions.length - 2]?.second,
         questions: questions.slice(0, questions.length - 1),
-        totalTime: totalTime + (LOOP_SECONDS - loopTime),
+        totalTime:
+          totalTime + (questions[questions.length - 1]?.second - loopTime),
       });
 
       this._frame = 0;
       cancelAnimationFrame(this._rafId);
-      this._rafId = requestAnimationFrame(this.getNextFrame(LOOP_SECONDS));
+      this._rafId = requestAnimationFrame(
+        this.getNextFrame(questions[questions.length - 2]?.second)
+      );
       this.$answer_input.value = "";
     } else {
       this.endGame();

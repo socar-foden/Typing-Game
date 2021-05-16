@@ -3,13 +3,14 @@ import { getByTestId } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
 import Complete from "./Complete";
+import Store from "../../store/store";
 
 describe("[Complete]", () => {
   const screen = document.createElement("div");
   let complete;
 
   beforeEach(() => {
-    complete = new Complete();
+    complete = new Complete(new Store());
     complete.render(screen);
   });
 

@@ -3,16 +3,20 @@ import { fireEvent, getByTestId } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
 import Main from "./Main";
-import { enterKey, initialState } from "../../constants/constants";
+import { enterKey, mock_initialState } from "../../constants/constants";
+import Store from "../../store/store";
 
-const { questions, loopTime, numberOfAnswer } = initialState;
+const { questions, loopTime, numberOfAnswer } = mock_initialState;
 
 describe("[Main]", () => {
   const screen = document.createElement("div");
   let main;
 
   beforeEach(() => {
-    main = new Main();
+    const store = new Store();
+    store.setState(mock_initialState);
+    main = new Main(store);
+    store.addObserver(main);
     main.render(screen);
   });
 
@@ -51,12 +55,14 @@ describe("[Main]", () => {
       });
 
       it("텍스트가 '초기화'로 변경된다.", () => {
+        userEvent.click(getByTestId(screen, "start-button"));
         expect(getByTestId(screen, "start-button").innerHTML).toEqual("초기화");
       });
     });
 
     describe("오답 입력 후 Enter 입력", () => {
       it("getWrongAnswer 함수가 호출된다.", () => {
+        userEvent.click(getByTestId(screen, "start-button"));
         const mockCall = jest.spyOn(main, "getWrongAnswer");
 
         fireEvent.change(getByTestId(screen, "answer-input"), {
@@ -68,11 +74,15 @@ describe("[Main]", () => {
     });
 
     describe("정답 입력 후 Enter 입력", () => {
+      beforeEach(() => {
+        userEvent.click(getByTestId(screen, "start-button"));
+      });
+
       it("getRightAnswer 함수가 호출된다.", () => {
         const mockCall = jest.spyOn(main, "getRightAnswer");
 
         fireEvent.change(getByTestId(screen, "answer-input"), {
-          target: { value: questions[questions.length - 1] },
+          target: { value: questions[questions.length - 1]?.text },
         });
         fireEvent.keyPress(getByTestId(screen, "answer-input"), enterKey);
         expect(mockCall).toBeCalled();
@@ -80,7 +90,7 @@ describe("[Main]", () => {
 
       it("다음 문제가 출제된다.", () => {
         expect(getByTestId(screen, "question").innerHTML).toEqual(
-          questions[questions.length - 2]
+          questions[questions.length - 1]?.text
         );
       });
 
@@ -103,6 +113,7 @@ describe("[Main]", () => {
 
     describe("'초기화' 버튼 클릭", () => {
       it("initGame 함수가 호출된다.", () => {
+        userEvent.click(getByTestId(screen, "start-button"));
         const mockCall = jest.spyOn(main, "initGame");
 
         userEvent.click(getByTestId(screen, "start-button"));

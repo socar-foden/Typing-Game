@@ -1,10 +1,11 @@
 import Complete from "../../pages/Complete/Complete";
+import Store from "../../store/store";
 import Router from "./Router";
 
 describe("[Router]", () => {
   const root = document.createElement("div");
   const router = new Router(root);
-  const complete = new Complete();
+  const complete = new Complete(new Store());
 
   router.addPage({ path: "/complete", view: complete });
 

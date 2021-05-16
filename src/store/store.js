@@ -4,20 +4,6 @@ class Store {
   constructor() {
     this._state = initialState;
     this._observers = [];
-
-    if (!Store._instance) {
-      Store._instance = this;
-    } else {
-      return Store._instance;
-    }
-  }
-
-  static getInstance() {
-    if (!Store._instance) {
-      Store._instance = new Store();
-    }
-
-    return this._instance;
   }
 
   setState(state) {

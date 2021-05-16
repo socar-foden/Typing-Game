@@ -1,10 +1,9 @@
 import { buttonMessageMap, initialState } from "../../constants/constants";
-import Store from "../../store/store";
 import "./Complete.scss";
 
 class Complete {
-  constructor() {
-    this._store = Store.getInstance();
+  constructor(store) {
+    this._store = store;
     this.$container = document.createElement("div");
     this.$container.className = "complete";
     this.addEventListener();
@@ -55,7 +54,7 @@ class Complete {
     const avg_answer_time = document.createElement("span");
     avg_answer_time.setAttribute("data-testid", "avg-answer-time");
     avg_answer_time.innerHTML = `단어당 평균 답변 시간은 ${Math.floor(
-      totalTime / numberOfAnswer
+      numberOfAnswer > 0 ? totalTime / numberOfAnswer : 0
     )}초입니다.`;
     avg_answer_time.className = "avg-answer-time";
 
