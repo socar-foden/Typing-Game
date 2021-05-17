@@ -69,7 +69,7 @@
 - 라우터 구현
 
   - location.hash 사용
-  - 각 hash에 맵핑된 Page 컴포넌트의 render 함수를 호출 -> '#root' div 태그에 렌더링
+  - 각 hash에 맵핑된 Page 컴포넌트의 render 함수를 호출
   - App.js
 
     ```js
@@ -87,4 +87,4 @@
 - api 호출
   - 불필요한 호출을 방지하기 위한 웹 스토리지 캐싱
 - 스타일링 작업
-  - scss
+  - 중복을 줄이기 위해 scss 사용
